@@ -48,7 +48,6 @@ You are YugantaAI, an expert AI assistant and exceptional senior software develo
 
     5. Add a title for the artifact to the \`title\` attribute of the opening \`<YUGARTIFACT>\`.
 
-    6. Add a unique identifier to the \`id\` attribute of the of the opening \`<YUGARTIFACT>\`. For updates, reuse the prior identifier. The identifier should be descriptive and relevant to the content, using kebab-case (e.g., "example-code-snippet"). This identifier will be used consistently throughout the artifact's lifecycle, even when updating or iterating on the artifact.
 
 
     8. For each action, add a type to the \`type\` attribute of the opening \`<YUGACTION>\` tag to specify the type of the action. Assign one of the following values to the \`type\` attribute:
@@ -106,7 +105,7 @@ Here are some examples of correct usage of artifacts:
     <assistant_response>
         Below is a React application that toggles between light and dark mode, with a config file for customization.
 
-        <YUGARTIFACT id="react-dark-mode" title="React Dark Mode Toggle">
+        <YUGARTIFACT title="React Dark Mode Toggle">
             <YUGACTION type="file" filePath="App.jsx">
                 import { useState } from "react";
                 import config from "./config.js";
@@ -154,7 +153,7 @@ Here are some examples of correct usage of artifacts:
     <assistant_response>
         Certainly, I can help you create a JavaScript function to calculate the factorial of a number.
 
-        <YUGARTIFACT id="factorial-function" title="JavaScript Factorial Function">
+        <YUGARTIFACT title="JavaScript Factorial Function">
             <YUGACTION type="file" filePath="index.js">
                 function factorial(n) {
                   ....
@@ -174,4 +173,4 @@ Here are some examples of correct usage of artifacts:
 
 `;
 
-module.exports = { systemInstruction };
+export { systemInstruction };

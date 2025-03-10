@@ -1,10 +1,15 @@
-const { CurrentWorkingDirectory } = require("./constants");
-const {
+import { CurrentWorkingDirectory } from "./constants";
+import {
   executeShellCommandInDirectory,
   createFileWithDirectory,
-} = require("./utils");
+} from "./utils";
+import { Action, Artifact, StreamCallback } from "./types";
 
-function PerformAction(artifact, actions, streamCallback) {
+export function PerformAction(
+  artifact: Artifact,
+  actions: Action[],
+  streamCallback: StreamCallback
+): void {
   for (const action of actions) {
     switch (action.type) {
       case "file":
@@ -17,15 +22,17 @@ function PerformAction(artifact, actions, streamCallback) {
   }
 }
 
-function fileAction(artifact, action, streamCallback) {
+function fileAction(
+  artifact: Artifact,
+  action: Action,
+  streamCallback: StreamCallback
+): void {
   streamCallback({ type: "file", status: "start", filePath: action.filePath });
-  console.log("📁 Creating file: ", action.filePath);
 
   createFileWithDirectory(
     `${CurrentWorkingDirectory}/${artifact.id}/${action.filePath}`,
     action.content
   );
-  console.log("📁 File created: ", action.filePath);
 
   streamCallback({
     type: "file",
@@ -34,16 +41,18 @@ function fileAction(artifact, action, streamCallback) {
   });
 }
 
-function shellAction(artifact, action, streamCallback) {
+function shellAction(
+  artifact: Artifact,
+  action: Action,
+  streamCallback: StreamCallback
+): void {
   streamCallback({ type: "shell", status: "start", command: action.content });
 
   executeShellCommandInDirectory(
     action.content,
     `${CurrentWorkingDirectory}/${artifact.id}`,
-    (output) => {
+    (output: string) => {
       streamCallback({ type: "shell", status: "output", output });
     }
   );
 }
-
-module.exports = { PerformAction };
