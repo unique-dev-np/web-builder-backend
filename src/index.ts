@@ -3,7 +3,7 @@ import cors from "cors";
 import { parseXMLStream } from "./parser";
 import { model } from "./ai";
 import { v4 as uuidv4 } from "uuid";
-import { Conversation, GenerateRequest, StreamUpdate } from "./types";
+import { GenerateRequest, StreamUpdate } from "./types";
 import { Content, Part } from "@google/generative-ai";
 
 const app = express();
@@ -34,8 +34,6 @@ app.post(
       title: conversation?.title || null,
       history: conversation?.history || [],
     };
-
-    console.log(JSON.stringify(initializedConversation));
 
     // If no prompt is provided, return an error
     if (!prompt) {
