@@ -1,19 +1,32 @@
 import express, { Request, Response } from "express";
+import cors from "cors";
 import { parseXMLStream } from "./parser";
 import { model } from "./ai";
 import { v4 as uuidv4 } from "uuid";
-import { GenerateRequest, StreamUpdate } from "./types";
+import { Conversation, GenerateRequest, StreamUpdate } from "./types";
 import { Content, Part } from "@google/generative-ai";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 1000;
+
+// CORS configuration
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
 app.post(
   "/generate",
   async (req: Request<{}, {}, GenerateRequest>, res: Response) => {
-    const { prompt, conversation } = req.body;
+    // Get prompt and conversationId from URL search params
+    const prompt = req.body.prompt as string;
+    const conversation = req.body
+      .conversation as GenerateRequest["conversation"];
 
     // Initialize conversation if not provided
     const initializedConversation = {
@@ -22,6 +35,8 @@ app.post(
       history: conversation?.history || [],
     };
 
+    console.log(JSON.stringify(initializedConversation));
+
     // If no prompt is provided, return an error
     if (!prompt) {
       res.status(400).json({ error: "Prompt is required" });
@@ -29,23 +44,20 @@ app.post(
     }
 
     // Set up SSE headers
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Transfer-Encoding", "chunked");
 
     try {
       // Set up the contents for the conversation
-      const contents: Content[] = initializedConversation.history.map(
-        (msg) => ({
-          role: msg.role,
-          parts: [{ text: msg.content }] as Part[],
-        })
-      );
+      const contents = conversation?.history;
+
+      console.log("\n \n Contents: ", JSON.stringify(contents));
+      console.log("\n \n Prompt: ", prompt);
 
       // Generate the content stream
       const result = await model.generateContentStream({
         contents: [
-          ...contents,
+          ...(contents as Content[]),
           { role: "user", parts: [{ text: prompt }] as Part[] },
         ],
       });
@@ -60,10 +72,12 @@ app.post(
       )
         // When the stream is complete, write the final response
         .then(({ artifact }) => {
+          console.log("Final response");
+
           res.write(
             `data: ${JSON.stringify({
-              type: "complete",
-              rawResponse: artifact.response,
+              status: "completed",
+              artifact: artifact,
             } as StreamUpdate)}\n\n`
           );
           res.end();

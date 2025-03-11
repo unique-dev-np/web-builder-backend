@@ -5,7 +5,6 @@ export interface Action {
 }
 
 export interface Artifact {
-  started: boolean;
   title: string | null;
   id: string;
   response: string;
@@ -20,6 +19,7 @@ export interface StreamCallback {
   (update: {
     type: string;
     status: string;
+    action?: string;
     filePath?: string;
     command?: string;
     output?: string;
@@ -42,9 +42,9 @@ export interface GenerateRequest {
 }
 
 export interface StreamUpdate {
-  type: string;
+  type?: string;
   status?: string;
-  output?: string;
+  action?: string;
   error?: string;
-  rawResponse?: string;
+  artifact?: Artifact;
 }

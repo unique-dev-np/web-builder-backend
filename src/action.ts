@@ -27,7 +27,12 @@ function fileAction(
   action: Action,
   streamCallback: StreamCallback
 ): void {
-  streamCallback({ type: "file", status: "start", filePath: action.filePath });
+  streamCallback({
+    type: "file",
+    status: "update",
+    action: "start",
+    filePath: action.filePath,
+  });
 
   createFileWithDirectory(
     `${CurrentWorkingDirectory}/${artifact.id}/${action.filePath}`,
@@ -36,7 +41,8 @@ function fileAction(
 
   streamCallback({
     type: "file",
-    status: "complete",
+    status: "update",
+    action: "complete",
     filePath: action.filePath,
   });
 }

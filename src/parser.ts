@@ -6,8 +6,7 @@ export async function parseXMLStream(
   conversation: Conversation,
   streamCallback: StreamCallback
 ): Promise<{ artifact: Artifact }> {
-  let artifact = {
-    started: false,
+  let artifact: Artifact = {
     title: conversation.title,
     id: conversation.id,
     response: "",
