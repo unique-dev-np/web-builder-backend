@@ -35,7 +35,7 @@ function fileAction(
   });
 
   createFileWithDirectory(
-    `${CurrentWorkingDirectory}/${artifact.id}/${action.filePath}`,
+    `${getDirectory(artifact)}/${action.filePath}`,
     action.content
   );
 
@@ -56,9 +56,13 @@ function shellAction(
 
   executeShellCommandInDirectory(
     action.content,
-    `${CurrentWorkingDirectory}/${artifact.id}`,
+    getDirectory(artifact),
     (output: string) => {
       streamCallback({ type: "shell", status: "output", output });
     }
   );
+}
+
+function getDirectory(artifact: Artifact) {
+  return `${CurrentWorkingDirectory}/${artifact.title}-${artifact.id}`;
 }

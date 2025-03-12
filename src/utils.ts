@@ -8,6 +8,8 @@ export function createFileWithDirectory(
 ): void {
   const dirPath = path.dirname(filePath); // Get the directory path from the file path
 
+  console.log("File Path", filePath);
+  console.log("File Dir Path", dirPath);
   // Create directories synchronously if they do not exist
   fs.mkdirSync(dirPath, { recursive: true });
   fs.writeFileSync(filePath, content);
@@ -19,6 +21,9 @@ export function executeShellCommandInDirectory(
   dir: string,
   callback: (output: string) => void
 ): void {
+  console.log("Command", command);
+  console.log("Cmd Dir", dir);
+
   // Use spawn to run the command asynchronously
   const cmd = spawn(command, { cwd: dir, shell: true });
 
